@@ -44,6 +44,12 @@ cd docker-wordpress-honeypot && \
 
 docker-compose -f wordpress.yml up -d && \
 
+# Grab file changes with inotifywait
+inotifywait -drq -o ${PWD}/watch.log -e 'create,close_write,delete,modify,moved_from,moved_to' --timefmt '%H:%M:%S[%Z]' --format '%T %w%f %e' ${PWD}/wordpress && \
+
+# Grab network traffic with tcpdump
+docker run --net=container:dockerwordpresshoneypot_wordpress_1 -v $PWD:/data -d corfr/tcpdump -i any -w /data/dump.pcap && \
+
 PUB_NET=$(docker inspect dockerwordpresshoneypot_proxy | jq '.[0].Containers[] | select(.Name=="dockerwordpresshoneypot_wordpress_1") | .IPv4Address' --raw-output)
 PUB_INT="br-$(docker network ls | grep dockerwordpresshoneypot_proxy | awk '{print $1}')"
 
