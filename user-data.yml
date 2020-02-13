@@ -38,7 +38,9 @@ sudo apt-get -y install \
   jq \
   git
 
-sudo git clone https://github.com/lsemenenko/docker-wordpress-honeypot.git . && \
+sudo git clone https://github.com/lsemenenko/docker-wordpress-honeypot.git && \
+
+cd docker-wordpress-honeypot && \
 
 docker-compose -f wordpress.yml up -d && \
 
