@@ -1,0 +1,54 @@
+#!/bin/bash
+
+apt-get update && \
+
+sudo apt-get -y remove \
+  docker \
+  docker-engine \
+  docker.io \
+  containerd \
+  runc \
+  && \
+
+sudo apt-get -y install \
+  apt-transport-https \
+  ca-certificates \
+  curl \
+  gnupg-agent \
+  software-properties-common \
+  && \
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  | sudo apt-key add - \
+  && \
+
+sudo apt-key fingerprint 0EBFCD88 && \
+
+sudo add-apt-repository \
+  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) \
+  stable" \
+  && \
+
+sudo apt-get -y install \
+  docker-ce \
+  docker-ce-cli \
+  containerd.io \
+  docker-compose \
+  jq \
+  git
+
+sudo git clone https://github.com/lsemenenko/docker-wordpress-honeypot.git . && \
+
+docker-compose -f wordpress.yml up -d && \
+
+PUB_NET=$(docker inspect root_proxy | jq '.[0].Containers[] | select(.Name=="root_wordpress_1") | .IPv4Address' --raw-output)
+PUB_INT="br-$(docker network ls | grep root_proxy | awk '{print $1}')"
+
+# TODO: tighten up firewall rules
+iptables -I DOCKER-USER -i ${PUB_INT} ! -d ${PUB_NET} -j DROP && \
+iptables -I DOCKER-USER -i ${PUB_INT} -p tcp --sport 80 -j ACCEPT && \
+iptables -I DOCKER-USER -i ${PUB_INT} -p udp --dport 53 -j ACCEPT && \
+iptables -I DOCKER-USER -i ${PUB_INT} -d api.wordpress.org -j ACCEPT && \
+iptables -I DOCKER-USER -i ${PUB_INT} -d downloads.wordpress.org -j ACCEPT && \
+iptables -I DOCKER-USER -i ${PUB_INT} -d wordpress.org -j ACCEPT
