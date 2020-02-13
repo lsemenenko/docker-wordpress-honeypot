@@ -36,7 +36,8 @@ sudo apt-get -y install \
   containerd.io \
   docker-compose \
   jq \
-  git
+  git \
+  inotify-tools
 
 sudo git clone https://github.com/lsemenenko/docker-wordpress-honeypot.git && \
 
@@ -50,8 +51,8 @@ inotifywait -drq -o ${PWD}/watch.log -e 'create,close_write,delete,modify,moved_
 # Grab network traffic with tcpdump
 docker run --net=container:dockerwordpresshoneypot_wordpress_1 -v $PWD:/data -d corfr/tcpdump -i any -w /data/dump.pcap && \
 
-PUB_NET=$(docker inspect dockerwordpresshoneypot_proxy | jq '.[0].Containers[] | select(.Name=="dockerwordpresshoneypot_wordpress_1") | .IPv4Address' --raw-output)
-PUB_INT="br-$(docker network ls | grep dockerwordpresshoneypot_proxy | awk '{print $1}')"
+PUB_NET=$(docker inspect dockerwordpresshoneypot_proxy | jq '.[0].Containers[] | select(.Name=="dockerwordpresshoneypot_wordpress_1") | .IPv4Address' --raw-output) && \
+PUB_INT="br-$(docker network ls | grep dockerwordpresshoneypot_proxy | awk '{print $1}')" && \
 
 # TODO: tighten up firewall rules
 iptables -I DOCKER-USER -i ${PUB_INT} ! -d ${PUB_NET} -j DROP && \
