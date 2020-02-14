@@ -1,0 +1,6 @@
+*
+
+!.gitignore
+!wordpress.yml
+!user-data.yml
+!conf/*
