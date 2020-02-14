@@ -1,4 +1,3 @@
-# Hoarding this in case my config doesn't work out.
 # Source: https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
 filebeat.inputs:
 - type: container
