@@ -76,7 +76,7 @@ main() {
   iptables -I DOCKER-USER -i ${PUB_INT} -d wordpress.org -j ACCEPT && \
 
   # Install using admin and an easy password using generate_easy_pass()
-  docker run -it --rm --volumes-from dockerwordpresshoneypot_wordpress_1 --network container:dockerwordpresshoneypot_wordpress_1 wordpress:cli core install --url="$(curl -s checkip.amazonaws.com)" --title="Wordpress Site" --admin_user="admin" --admin_password="$(generate_easy_pass)" --admin_email="turtle$(tr -cd '[:digit:]' < /dev/urandom | fold -w7 | head -n1)@gmail.com" --skip-email
+  docker run --rm --volumes-from dockerwordpresshoneypot_wordpress_1 --network container:dockerwordpresshoneypot_wordpress_1 wordpress:cli core install --url="$(curl -s checkip.amazonaws.com)" --title="Wordpress Site" --admin_user="admin" --admin_password="$(generate_easy_pass)" --admin_email="turtle$(tr -cd '[:digit:]' < /dev/urandom | fold -w7 | head -n1)@gmail.com" --skip-email
 }
 
 # Generate easy password using list from https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/darkweb2017-top10.txt
