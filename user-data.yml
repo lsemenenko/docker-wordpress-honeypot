@@ -1,5 +1,10 @@
 #!/bin/bash
 
+### Define ENV variables
+# Opted to go this route vs using .env file
+export ELASTIC_CLOUD_ID=""
+export ELASTIC_CLOUD_AUTH=""
+
 apt-get update && \
 
 sudo apt-get -y remove \
