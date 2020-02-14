@@ -49,6 +49,14 @@ services:
       - /var/lib/docker:/var/lib/docker:ro
       - /var/run/docker.sock:/var/run/docker.sock
 
+# TODO: find a better way...
+  getip:
+    image: curlimages/curl
+    restart: "no"
+    user: root
+    command: -s checkip.amazonaws.com
+    
+
 volumes:
   wordpress:
   db:
